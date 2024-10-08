@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>메인 화면</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .user-info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .user-info p {
+            margin: 5px 0;
+        }
+
+        .api-result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        .api-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .api-table th, .api-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .api-table th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            fetch('/members/session')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('로그인 정보가 없습니다.');
+                    }
+                    return response.json();
+                })
+                .then(member => {
+                    document.getElementById('userName').textContent = `이름: ${member.memberName}`;
+                    document.getElementById('userId').textContent = `ID: ${member.id}`;
+                    document.getElementById('userBirthday').textContent = `생년월일: ${member.memberBirthday}`;
+                    document.getElementById('userLoginId').textContent = `로그인 ID: ${member.memberLoginId}`;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('사용자 정보를 불러오는 데 실패했습니다.');
+                });
+        };
+
+        function fetchMemberById() {
+            const memberId = document.getElementById("memberIdInput").value;
+            fetch(`/members/${memberId}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayJson(data);
+                    displayTable([data]);
+                })
+                .catch(error => alert('회원 정보를 가져오는 데 실패했습니다.'));
+        }
+
+        function fetchAllMembers() {
+            fetch(`/members`)
+                .then(response => response.json())
+                .then(data => {
+                    displayJson(data);
+                    displayTable(data);
+                })
+                .catch(error => alert('전체 회원 정보를 가져오는 데 실패했습니다.'));
+        }
+
+        function searchMembersByName() {
+            const memberName = document.getElementById("memberNameInput").value;
+            fetch(`/members/search?memberName=${memberName}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayJson(data);
+                    displayTable(data);
+                })
+                .catch(error => alert('회원 이름으로 검색하는 데 실패했습니다.'));
+        }
+
+        function displayJson(result) {
+            document.getElementById('jsonResult').textContent = JSON.stringify(result, null, 2);
+        }
+
+        function displayTable(data) {
+            const resultArea = document.getElementById('tableResult');
+            resultArea.innerHTML = ''; // 이전 내용을 초기화
+
+            if (data.length === 0) {
+                resultArea.textContent = '결과가 없습니다.';
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.classList.add('api-table');
+
+            // 테이블 헤더 생성
+            const headers = ['ID', '이름', '생년월일', '로그인 ID'];
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            headers.forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // 테이블 바디 생성
+            const tbody = document.createElement('tbody');
+            data.forEach(member => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${member.id}</td>
+                    <td>${member.memberName}</td>
+                    <td>${member.memberBirthday}</td>
+                    <td>${member.memberLoginId}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+
+            resultArea.appendChild(table);
+        }
+    </script>
+</head>
+<body>
+<div class="user-info">
+    <p id="userName">이름: </p>
+    <p id="userId">ID: </p>
+    <p id="userBirthday">생년월일: </p>
+    <p id="userLoginId">로그인 ID: </p>
+</div>
+
+<h1>메인 화면</h1>
+
+<div>
+    <h3>회원 정보를 조회하기</h3>
+    <label for="memberIdInput">회원 ID로 조회:</label>
+    <input type="text" id="memberIdInput" placeholder="회원 ID">
+    <button onclick="fetchMemberById()">조회</button>
+    <br><br>
+
+    <h3>전체 회원 정보 조회</h3>
+    <button onclick="fetchAllMembers()">전체 조회</button>
+    <br><br>
+
+    <h3>회원 이름으로 검색</h3>
+    <label for="memberNameInput">이름으로 검색:</label>
+    <input type="text" id="memberNameInput" placeholder="회원 이름">
+    <button onclick="searchMembersByName()">검색</button>
+</div>
+
+<div class="api-result">
+    <h3>JSON 결과</h3>
+    <pre id="jsonResult">API JSON 결과가 여기에 표시됩니다.</pre>
+</div>
+
+<div class="api-result">
+    <h3>테이블 결과</h3>
+    <div id="tableResult">API 테이블 결과가 여기에 표시됩니다.</div>
+</div>
+</body>
+</html>

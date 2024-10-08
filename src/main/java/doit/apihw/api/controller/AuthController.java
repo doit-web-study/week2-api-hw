@@ -2,12 +2,12 @@ package doit.apihw.api.controller;
 
 import doit.apihw.api.controller.dto.AuthLoginRequest;
 import doit.apihw.api.controller.dto.AuthLoginResponse;
-import doit.apihw.api.controller.dto.AuthPasswordChangeRequest;
 import doit.apihw.api.controller.dto.AuthSignUpRequest;
 import doit.apihw.api.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,8 +45,19 @@ public class AuthController {
      * 로그인을 진행한다.
      */
     @PostMapping("/auth/members/login")
-    public AuthLoginResponse login(@RequestBody AuthLoginRequest request) {
-        return authService.login(request);
+    public AuthLoginResponse login(@RequestBody AuthLoginRequest request,
+                                   HttpServletRequest httpServletRequest) {
+        // 기존 세션이 없으면, 새로운 세션을 생성한다.
+        HttpSession session = httpServletRequest.getSession(true);
+
+        // 로그인 처리
+        AuthLoginResponse response = authService.login(request);
+
+        // 세션에 로그인 정보를 저장한다.
+        session.setAttribute("loginId", response.getId());
+        session.setAttribute("memberName", response.getMemberName());
+
+        return response;
     }
 
 
