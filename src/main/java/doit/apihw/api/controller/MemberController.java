@@ -51,5 +51,9 @@ public class MemberController {
     }
 
     // TODO : 자유 주제로 API를 추가로 구현해보세요.
+    @GetMapping("/members/birthday")
+    public List<MemberResponse> findAllBirthdayMembers() {
+        return memberService.findTodayBirthdayMember();
+    }
 
 }
