@@ -52,11 +52,15 @@ public class AuthService {
     // TODO : 로그인을 진행한다.
     public AuthLoginResponse login(AuthLoginRequest request) {
         // DB에서 memberLoginId와 memberPassword를 조회하여 일치하는 회원이 있는지 확인한다.
-
+        Member member = memberRepository.findByMemberLoginIdAndMemberPassword
+                (request.getMemberLoginId(), request.getMemberPassword());
         // 만약 일치하는 회원이 없다면, IllegalArgumentException을 발생시킨다.
-
+        if(member == null) {
+            throw new IllegalArgumentException("존재하지 않는 회원입니다. 다시 시도해주세요.");
+        }
         // 일치하는 회원이 있다면, MemberResponse로 변환하여 반환한다.
-        return null;
+        else
+            return AuthLoginResponse.from(member);
     }
 
 
