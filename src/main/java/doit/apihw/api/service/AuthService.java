@@ -2,14 +2,15 @@ package doit.apihw.api.service;
 
 import doit.apihw.api.controller.dto.AuthLoginRequest;
 import doit.apihw.api.controller.dto.AuthLoginResponse;
-import doit.apihw.api.controller.dto.AuthPasswordChangeRequest;
 import doit.apihw.api.controller.dto.AuthSignUpRequest;
 import doit.apihw.domain.member.Member;
 import doit.apihw.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Service
 @RequiredArgsConstructor
 public class AuthService {
 
@@ -52,11 +53,17 @@ public class AuthService {
     // TODO : 로그인을 진행한다.
     public AuthLoginResponse login(AuthLoginRequest request) {
         // DB에서 memberLoginId와 memberPassword를 조회하여 일치하는 회원이 있는지 확인한다.
+        Member member = memberRepository.findMemberByMemberLoginIdAndMemberPassword(request.getMemberLoginId(), request.getMemberPassword());
 
         // 만약 일치하는 회원이 없다면, IllegalArgumentException을 발생시킨다.
+        if(member == null) {
+            throw new IllegalArgumentException("일치하는 회원이 존재하지 않습니다.");
+        }
 
         // 일치하는 회원이 있다면, MemberResponse로 변환하여 반환한다.
-        return null;
+        else {
+            return AuthLoginResponse.from(member);
+        }
     }
 
 

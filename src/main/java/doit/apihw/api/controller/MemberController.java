@@ -3,14 +3,10 @@ package doit.apihw.api.controller;
 import doit.apihw.api.controller.dto.AuthPasswordChangeRequest;
 import doit.apihw.api.controller.dto.MemberResponse;
 import doit.apihw.api.service.MemberService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,6 +46,10 @@ public class MemberController {
         memberService.changePassword(memberId, request);
     }
 
-    // TODO : 자유 주제로 API를 추가로 구현해보세요.
+    // TODO : 자유 주제로 API를 추가로 구현해보세요. => 관리자가 회원 관리하기 위한 memberId 기준으로 정렬된 list
+    @PostMapping("/members/loginIdAsc")
+    public List<MemberResponse> searchMembersByIdAsc(@RequestParam String memberId) {
+        return memberService.AllMembersWithLoginIdDesc(memberId);
+    }
 
 }
