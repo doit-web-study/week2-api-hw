@@ -38,4 +38,10 @@ public class Member {
         }
         memberPassword = newPassword;
     }
+
+    public void changeName(String name){
+        if(name.equals(memberName))
+            throw new RuntimeException("뭘 바꾸겠다는건데");
+        memberName = name;
+    }
 }

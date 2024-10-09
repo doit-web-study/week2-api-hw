@@ -2,6 +2,7 @@ package doit.apihw.api.controller;
 
 import doit.apihw.api.controller.dto.AuthPasswordChangeRequest;
 import doit.apihw.api.controller.dto.MemberResponse;
+import doit.apihw.api.controller.dto.NewNameRequest;
 import doit.apihw.api.service.MemberService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class MemberController {
      */
     @GetMapping("/members/{memberId}")
     public MemberResponse findOneMember(@PathVariable Long memberId) {
+
         return memberService.findOneMember(memberId);
     }
 
@@ -51,5 +53,8 @@ public class MemberController {
     }
 
     // TODO : 자유 주제로 API를 추가로 구현해보세요.
-
+    @PostMapping("/members/{memberId}/name")
+    public void changeName(@PathVariable Long memberId, @RequestBody NewNameRequest request){
+        memberService.changeName(memberId, request);
+    }
 }
