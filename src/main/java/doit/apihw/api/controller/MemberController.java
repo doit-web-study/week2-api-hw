@@ -3,6 +3,8 @@ package doit.apihw.api.controller;
 import doit.apihw.api.controller.dto.AuthPasswordChangeRequest;
 import doit.apihw.api.controller.dto.MemberResponse;
 import doit.apihw.api.service.MemberService;
+
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,5 +53,11 @@ public class MemberController {
     }
 
     // TODO : 자유 주제로 API를 추가로 구현해보세요.
-
+    /**
+     * 회원 중 특정 날짜 이전에 태어난 회원 정보를 조회한다.
+     */
+    @GetMapping("/members/birthday")
+    public  List<MemberResponse> searchMembersByBirthday(@RequestParam LocalDate date) {
+        return memberService.searchMembersWithBirthday(date);
+    }
 }
