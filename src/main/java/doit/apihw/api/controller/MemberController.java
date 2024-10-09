@@ -5,12 +5,7 @@ import doit.apihw.api.controller.dto.MemberResponse;
 import doit.apihw.api.service.MemberService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,5 +46,11 @@ public class MemberController {
     }
 
     // TODO : 자유 주제로 API를 추가로 구현해보세요.
-
+    /**
+     * 회원 탈퇴 시 회원 정보를 삭제한다.
+     */
+    @DeleteMapping("/members/{memberId}/delete")
+    public void deleteMember(@PathVariable Long memberId) {
+        memberService.deleteMember(memberId);
+    }
 }
