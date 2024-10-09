@@ -7,6 +7,7 @@ import doit.apihw.domain.member.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,26 +32,41 @@ public class MemberService {
     // TODO : 전체 회원 정보를 조회한다.
     public List<MemberResponse> findAllMembers() {
         // DB에서 전체 회원 정보를 조회한다.
-
+        List<Member> members = memberRepository.findAll();
         // 조회된 회원 정보를 List<MemberResponse>로 변환하여 반환한다.
-        return null;
+        return members.stream()
+                .map(MemberResponse::from)
+                .collect(Collectors.toList());
     }
 
     // TODO : 회원 이름으로 회원 정보를 조회한다.
     public List<MemberResponse> searchMembersWithName(String memberName) {
         // DB에서 memberName에 해당하는 회원 정보를 조회한다.
-
+        List<Member> members = memberRepository.findByMemberNameContaining(memberName);
         // 조회된 회원 정보를 List<MemberResponse>로 변환하여 반환한다.
-        return null;
+        return members.stream()
+                .map(MemberResponse::from)
+                .toList();
     }
 
     // TODO : 회원 비밀번호를 변경한다.
     public void changePassword(Long memberId, AuthPasswordChangeRequest request) {
         // DB에서 memberId에 해당하는 회원 정보를 조회하고, 존재하지 않는다면 IllegalArgumentException을 발생시킨다.
-
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         // 조회된 회원 정보의 비밀번호를 변경한다. ( request.getNewPassword()를 이용하여 변경한다. )
-
+        member.changePassword(request.getOldPassword(), request.getNewPassword());
+        memberRepository.save(member);
         // 변경된 회원 정보를 DB에 저장한다.
+    }
+
+    public MemberResponse updateMemberName(Long memberId, String newName) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        member.updateName(newName);
+        Member updatedMember = memberRepository.save(member);
+        return MemberResponse.from(updatedMember);
     }
 
 }
