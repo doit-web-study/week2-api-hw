@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,5 +52,11 @@ public class MemberController {
     }
 
     // TODO : 자유 주제로 API를 추가로 구현해보세요.
-
+    @PostMapping("/members/{memberId}/name")
+    public ResponseEntity<MemberResponse> updateMemberName(
+            @PathVariable Long memberId,
+            @RequestBody String newName) {
+        MemberResponse updatedMember = memberService.updateMemberName(memberId, newName);
+        return ResponseEntity.ok(updatedMember);
+    }
 }
