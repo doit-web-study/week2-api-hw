@@ -28,6 +28,7 @@ public class AuthController {
      */
     @GetMapping("/auth/members/validate")
     public void validateLoginId(@RequestParam String memberLoginId) {
+
         authService.validateLoginId(memberLoginId);
     }
 
