@@ -52,11 +52,14 @@ public class AuthService {
     // TODO : 로그인을 진행한다.
     public AuthLoginResponse login(AuthLoginRequest request) {
         // DB에서 memberLoginId와 memberPassword를 조회하여 일치하는 회원이 있는지 확인한다.
-
+        Member member = memberRepository.findByMemberLoginIdAndMemberPassword( request.getMemberLoginId(), request.getMemberPassword() );
         // 만약 일치하는 회원이 없다면, IllegalArgumentException을 발생시킨다.
-
+        if(member == null) {
+            throw new IllegalArgumentException("일치하는 회원이 없거등요 다시 입력해~");
+        }
         // 일치하는 회원이 있다면, MemberResponse로 변환하여 반환한다.
-        return null;
+        // 이건 좀 어렵네요...답지를 참고했습니다 자동생성으로 알려주긴 한데 없었으면 못 썼을 거 같습니다....
+        return AuthLoginResponse.from(member);
     }
 
 
